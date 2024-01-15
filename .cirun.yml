@@ -7,7 +7,7 @@ runners:
     # Instance Type has 4 vcpu, 16 GiB memory, Up to 5 Gbps Network Performance
     instance_type: t3a.xlarge
     # Custom AMI with docker/cypress/hub pre-installed
-    machine_image: ami-0b00778f1a4493e7c
+    machine_image: ami-0978fa7dc739004d3
     # Region: Oregon
     region: eu-west-1
     # Use Spot Instances for cost savings
