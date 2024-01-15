@@ -18,6 +18,7 @@ on:
   push:
     branches:
       - main
+      - 2154
       - develop
       - release/\d{4}.\d{1,2}.\d{1,2}
     paths:
@@ -99,8 +100,6 @@ jobs:
           cat nebari-config.yaml
 
       - name: Deploy Nebari
-        # env:
-        #   TF_LOG: TRACE
         working-directory: local-deployment
         run: |
           nebari deploy --config nebari-config.yaml --disable-prompt
@@ -191,3 +190,7 @@ jobs:
         working-directory: local-deployment
         run: |
           nebari destroy --config nebari-config.yaml --disable-prompt
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: always()
