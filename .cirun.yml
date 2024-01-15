@@ -9,7 +9,7 @@ runners:
     # Custom AMI with docker/cypress/hub pre-installed
     machine_image: ami-0b00778f1a4493e7c
     # Region: Oregon
-    region: us-west-2
+    region: eu-west-1
     # Use Spot Instances for cost savings
     preemptible:
       - true
