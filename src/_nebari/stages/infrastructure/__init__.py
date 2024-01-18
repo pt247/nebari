@@ -449,10 +449,10 @@ class AmazonWebServicesProvider(schema.Base):
     node_groups: Dict[str, AWSNodeGroup] = {
         "general": AWSNodeGroup(instance="m5.2xlarge", min_nodes=1, max_nodes=1),
         "user": AWSNodeGroup(
-            instance="m5.xlarge", min_nodes=0, max_nodes=5, single_subnet=False
+            instance="m5.xlarge", min_nodes=1, max_nodes=5, single_subnet=False
         ),
         "worker": AWSNodeGroup(
-            instance="m5.xlarge", min_nodes=0, max_nodes=5, single_subnet=False
+            instance="m5.xlarge", min_nodes=1, max_nodes=5, single_subnet=False
         ),
     }
     existing_subnet_ids: List[str] = None
@@ -583,11 +583,6 @@ class NodeSelectorKeyValue(schema.Base):
     value: str
 
 
-class AsgNodeGroupMap(schema.Base):
-    key: str
-    value: str
-
-
 class KubernetesCredentials(schema.Base):
     host: str
     cluster_ca_certifiate: str
@@ -605,7 +600,6 @@ class OutputSchema(schema.Base):
     kubernetes_credentials: KubernetesCredentials
     kubeconfig_filename: str
     nfs_endpoint: Optional[str]
-    asg_node_group_map: Optional[AsgNodeGroupMap]
 
 
 class KubernetesInfrastructureStage(NebariTerraformStage):
@@ -829,18 +823,17 @@ class KubernetesInfrastructureStage(NebariTerraformStage):
         self, stage_outputs: Dict[str, Dict[str, Any]], outputs: Dict[str, Any]
     ):
         outputs["node_selectors"] = _calculate_node_groups(self.config)
-        outputs["asg_node_group_map"] = _calculate_asg_node_group_map(self.config)
         super().set_outputs(stage_outputs, outputs)
 
 
-    @contextlib.contextmanager
-    def post_deploy(
-            self, stage_outputs: Dict[str, Dict[str, Any]], disable_prompt: bool = False
-    ):
-        if stage_outputs["asg_node_group_map"]:
-            amazon_web_services.set_asg_tags(
-                stage_outputs["asg_node_group_map"],
-                self.config.amazon_web_services.region)
+    # @contextlib.contextmanager
+    # def post_deploy(
+    #         self, stage_outputs: Dict[str, Dict[str, Any]], disable_prompt: bool = False
+    # ):
+    #     if stage_outputs["asg_node_group_map"]:
+    #         amazon_web_services.set_asg_tags(
+    #             stage_outputs["asg_node_group_map"],
+    #             self.config.amazon_web_services.region)
 
 
     @contextlib.contextmanager
