@@ -46,11 +46,12 @@ metadata:
   name: letsencrypt-staging
   namespace: dev
 spec:
-  secretName: local.quansight-dev-tls
+  secretName: at.quansight-dev-tls
   issuerRef:
     name: letsencrypt-staging
+    kind: ClusterIssuer
   dnsNames:
-  - local.nebari.dev
+  - at.quansight.dev
 YAML
 )
 }
