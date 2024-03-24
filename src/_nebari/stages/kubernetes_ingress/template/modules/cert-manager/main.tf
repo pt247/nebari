@@ -46,12 +46,14 @@ metadata:
   name: letsencrypt-staging
   namespace: dev
 spec:
-  secretName: at.quansight-dev-tls
+  secretName: local-at-quansight-dev-staging-tls
   issuerRef:
     name: letsencrypt-staging
     kind: ClusterIssuer
+  commonName: "*.local.at.quansight.dev"
   dnsNames:
-  - at.quansight.dev
+  - "local.at.quansight.dev"
+  - "*.local.at.quansight.dev"
 YAML
 )
 }
