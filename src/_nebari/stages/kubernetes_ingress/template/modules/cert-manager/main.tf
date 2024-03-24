@@ -17,12 +17,11 @@ resource "helm_release" "cert_manager" {
 
 
 resource "kubernetes_manifest" "clusterissuer_letsencrypt_staging" {
-  manifest = <<YAML
+  manifest = yamldecode(<<YAML
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
  name: letsencrypt-staging
- namespace: dev
 spec:
  acme:
    email: ptiwari@quansight.com
@@ -35,33 +34,23 @@ spec:
          ingress:
            class: traefik
 YAML
+  )
 }
 
 
-
-
 resource "kubernetes_manifest" "certificate_local_nebari_dev" {
-  manifest = <<YAML
+manifest = yamldecode(<<YAML
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: local-nebari.dev
+  name: letsencrypt-staging
   namespace: dev
-  cert-manager.io/issuer: "letsencrypt-staging"
 spec:
-  - hosts:
-    -  "local-nebari.dev"
-  secretName: local-nebari-dev-tls
- rules:
-   - host: local-nebari.dev
-     http:
-       paths:
-         - path: /
-           pathType: Prefix
-           backend:
-             service:
-               name: local
-               port:
-                 name: web
+  secretName: local.quansight-dev-tls
+  issuerRef:
+    name: letsencrypt-staging
+  dnsNames:
+  - local.nebari.dev
 YAML
+)
 }
