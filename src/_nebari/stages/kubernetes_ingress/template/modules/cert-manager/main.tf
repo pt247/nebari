@@ -21,18 +21,17 @@ resource "kubernetes_manifest" "clusterissuer_letsencrypt_staging" {
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
- name: letsencrypt-staging
+  name: letsencrypt-staging
 spec:
- acme:
-   email: ptiwari@quansight.com
-   server: https://acme-staging-v02.api.letsencrypt.org/directory
-   privateKeySecretRef:
-     name: letsencrypt-staging
-   solvers:
-     - http01:
-         # The ingressClass used to create the necessary ingress routes
-         ingress:
-           class: traefik
+  acme:
+    email: ptiwari@quansight.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging
+    solvers:
+    - http01:
+        ingress:
+          ingressClassName: traefik
 YAML
   )
 }
@@ -52,8 +51,8 @@ spec:
     kind: ClusterIssuer
   commonName: "*.local.at.quansight.dev"
   dnsNames:
-  - "local.at.quansight.dev"
-  - "*.local.at.quansight.dev"
+    - "local.at.quansight.dev"
+    - "*.local.at.quansight.dev"
 YAML
   )
 }
