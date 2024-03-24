@@ -55,5 +55,5 @@ spec:
   - "local.at.quansight.dev"
   - "*.local.at.quansight.dev"
 YAML
-)
+  )
 }
