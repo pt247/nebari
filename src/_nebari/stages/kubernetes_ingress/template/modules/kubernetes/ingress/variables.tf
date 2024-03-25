@@ -47,7 +47,7 @@ variable "acme-server" {
 variable "certificate-secret-name" {
   description = "Kubernetes secret used for certificate"
   type        = string
-  default     = null
+  default     = "local-at-quansight-dev-staging-tls"
 }
 
 variable "load-balancer-ip" {

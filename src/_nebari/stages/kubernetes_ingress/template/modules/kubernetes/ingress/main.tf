@@ -5,12 +5,14 @@ locals {
   ]
   certificate-settings = {
     lets-encrypt = [
-      "--entrypoints.websecure.http.tls.certResolver=letsencrypt",
-      "--entrypoints.minio.http.tls.certResolver=letsencrypt",
+      "--entrypoints.websecure.http.tls.certResolver=letsencrypt-staging",
+      "--entrypoints.minio.http.tls.certResolver=letsencrypt-staging",
       "--certificatesresolvers.letsencrypt.acme.tlschallenge",
       "--certificatesresolvers.letsencrypt.acme.email=${var.acme-email}",
       "--certificatesresolvers.letsencrypt.acme.storage=acme.json",
       "--certificatesresolvers.letsencrypt.acme.caserver=${var.acme-server}",
+#      "--acme-http01-solver-nameservers",
+#      "--acme-http01-solver-nameservers=8.8.8.8:53,1.1.1.1:53"
     ]
     self-signed = local.default_cert
     existing    = local.default_cert
@@ -83,7 +85,9 @@ resource "kubernetes_service" "main" {
   metadata {
     name        = "${var.name}-traefik-ingress"
     namespace   = var.namespace
-    annotations = var.load-balancer-annotations
+    annotations = {
+      "cert-manager.io/issuer" = "letsencrypt-staging"
+    }
   }
 
   spec {
