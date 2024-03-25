@@ -1,11 +1,25 @@
 installCRDs: true
 replicaCount: 1
 ## TODO Do we need more than one?
-extraArgs:
-  - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
-  - --dns01-recursive-nameservers-only
-podDnsPolicy: None
-podDnsConfig:
-  nameservers:
-    - 1.1.1.1
-    - 9.9.9.9
+#extraArgs:
+#  - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
+#  - --dns01-recursive-nameservers-only
+#  - --acme-http01-solver-nameservers=1.1.1.1:53,8.8.8.8:53
+#podDnsPolicy: None
+#podDnsConfig:
+#  nameservers:
+#    - 1.1.1.1
+#    - 8.8.8.8
+#extraArgs:
+#  - --acme-http01-solver-nameservers
+#  - --acme-http01-solver-nameservers=8.8.8.8:53,1.1.1.1:53
+#  - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+#  - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+#  - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
+#  - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
+#  - --dns01-recursive-nameservers-only
+#podDnsPolicy: None
+#podDnsConfig:
+#  nameservers:
+#    - 1.1.1.1
+#    - 9.9.9.9
