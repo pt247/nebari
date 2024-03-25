@@ -17,42 +17,46 @@ resource "helm_release" "cert_manager" {
 
 
 resource "kubernetes_manifest" "clusterissuer_letsencrypt_staging" {
+  depends_on = [helm_release.cert_manager]
   manifest = yamldecode(<<YAML
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt-staging
-spec:
-  acme:
-    email: ptiwari@quansight.com
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
-    privateKeySecretRef:
+    apiVersion: cert-manager.io/v1
+    kind: ClusterIssuer
+    metadata:
       name: letsencrypt-staging
-    solvers:
-    - http01:
-        ingress:
-          ingressClassName: traefik
-YAML
+    spec:
+      acme:
+        email: ptiwari@quansight.com
+        server: https://acme-staging-v02.api.letsencrypt.org/directory
+        privateKeySecretRef:
+          name: letsencrypt-staging
+        solvers:
+        - http01:
+            ingress:
+              ingressClassName: traefik
+    YAML
   )
 }
 
 
 resource "kubernetes_manifest" "certificate_local_nebari_dev" {
-manifest = yamldecode(<<YAML
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: letsencrypt-staging
-  namespace: dev
-spec:
-  secretName: local-at-quansight-dev-staging-tls
-  issuerRef:
-    name: letsencrypt-staging
-    kind: ClusterIssuer
-  commonName: "*.local.at.quansight.dev"
-  dnsNames:
-    - "local.at.quansight.dev"
-    - "*.local.at.quansight.dev"
-YAML
+  depends_on = [helm_release.cert_manager]
+  manifest = yamldecode(<<YAML
+    apiVersion: cert-manager.io/v1
+    kind: Certificate
+    metadata:
+      name: letsencrypt-staging
+      namespace: dev
+    spec:
+      secretName: local-at-quansight-dev-staging-tls
+      subject:
+        organizations:
+          - quansight-dev
+      issuerRef:
+        name: letsencrypt-staging
+        kind: ClusterIssuer
+      commonName: "at.quansight.dev"
+      dnsNames:
+        - "at.quansight.dev"
+    YAML
   )
 }
