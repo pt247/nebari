@@ -9,7 +9,7 @@ locals {
       "--entrypoints.minio.http.tls.certResolver=letsencrypt-staging",
       "--certificatesresolvers.letsencrypt.acme.tlschallenge",
       "--certificatesresolvers.letsencrypt.acme.email=${var.acme-email}",
-      "--certificatesresolvers.letsencrypt.acme.storage=acme.json",
+      "--certificatesresolvers.letsencrypt.acme.storage=/mnt/acme-certificates/acme.json",
       "--certificatesresolvers.letsencrypt.acme.caserver=${var.acme-server}",
 #      "--acme-http01-solver-nameservers",
 #      "--acme-http01-solver-nameservers=8.8.8.8:53,1.1.1.1:53"
@@ -27,6 +27,22 @@ resource "kubernetes_service_account" "main" {
     name      = "${var.name}-traefik-ingress"
     namespace = var.namespace
   }
+}
+
+resource "kubernetes_persistent_volume_claim" "traefik_certs_pvc" {
+  metadata {
+    name      = "traefik-ingress-certs"
+    namespace = var.namespace
+  }
+  spec {
+    access_modes = ["ReadWriteOnce"]
+    resources {
+      requests = {
+        storage = "5Gi"
+      }
+    }
+  }
+  wait_until_bound = false
 }
 
 
@@ -221,6 +237,10 @@ resource "kubernetes_deployment" "main" {
           image = "${var.traefik-image.image}:${var.traefik-image.tag}"
           name  = var.name
 
+          volume_mount {
+            mount_path = "/mnt/acme-certificates"
+            name       = "acme-certificates"
+          }
           security_context {
             capabilities {
               drop = ["ALL"]
@@ -330,6 +350,12 @@ resource "kubernetes_deployment" "main" {
             period_seconds        = 10
             failure_threshold     = 1
             success_threshold     = 1
+          }
+        }
+        volume {
+          name = "acme-certificates"
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.traefik_certs_pvc.metadata.0.name
           }
         }
       }
